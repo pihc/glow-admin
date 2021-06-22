@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/wgo/wgo.min.js"></script>
+    <script type="text/javascript" src="/wgo/wgo.player.min.js"></script>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/wgo/wgo.player.css" />
+    <style type="text/css">
+        .container{
+            position: relative;
+            width: 100%;
+            height: 1080px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+ <div class="container">
+     123132
+     <div id="player"></div>
+ </div>
+ <div class="container">
+     <div id="player1"></div>
+ </div>
+<script>
+    let sgf='(;SZ[19]KM[6.5]HA[0]GN[4届韩国龙星战快棋8强]PB[洪茂镇]PW[崔哲瀚];B[pd];W[dp];B[qp];W[dd];B[op];W[nc];B[qf];W[ne];B[cc];W[dc];B[cd];W[de];B[bf];W[pg];B[pf];W[og];B[rh];W[id];B[fq];W[pb];B[pi];W[ni];B[cn];W[dn];B[dm];W[en];B[cp];W[cq];B[co];W[fp];B[do];W[ep];B[bq];W[dr];B[cr];W[dq];B[br];W[jq];B[gp];W[ip];B[hp];W[gn];B[hn];W[io];B[ho];W[fl];B[hl];W[hr];B[gr];W[hq];B[gq];W[fj];B[hj];W[cf];B[ce];W[bg];B[cg];W[df];B[bh];W[dg];B[ag];W[mq];B[hh];W[ei];B[if];W[ii];B[hi];W[hm];B[gm];W[im];B[fn];W[gl];B[go];W[fm];B[kf];W[kd];B[ki];W[qo];B[po];W[qn];B[rp];W[pn];B[nr];W[rj];B[qj];W[qk];B[ri];W[pj];B[qi];W[qg];B[rg];W[qc];B[pk];W[re];B[rf];W[lg];B[kg];W[lh];B[hd];W[hc];B[he];W[gc];B[kk];W[rl];B[ql];W[rk];B[oj];W[il];B[hk];W[em];B[eo];W[fo];B[gn];W[er];B[fs];W[in];B[ds];W[nq];B[oq];W[mr];B[pl];W[oo];B[np];W[pp];B[pq];W[mn];B[lf];W[mk];B[li];W[mi];B[rd];W[qd];B[qe];W[rc];B[se];W[dl];B[ld];W[lc];B[md];W[mc];B[cb];W[cm];B[or];W[ch];B[ci];W[bg];B[bj];W[be];B[cg];W[bn];B[ao];W[bg];B[af];W[mp];B[no];W[nn];B[kl];W[es];B[cs];W[mf])'
+    // $.get("http://cdn.yikeweiqi.com/hawkeye/report/v4/1301d6e7b9943d12.json",function(data,status){
+    //     debugger
+       let p= new WGo.BasicPlayer(document.getElementById("player"), {
+            sgf: sgf,
+            layout: {
+                top: '',
+                bottom: []
+            }
+        });
+       p.goTo(30)
+        let p1= new WGo.BasicPlayer(document.getElementById("player1"), {
+            sgf: sgf,
+            layout: {
+                top: '',
+                bottom: []
+            }
+        });
+        p1.goTo(60)
+    // });
+
+</script>
+</body>
+</html>

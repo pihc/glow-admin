@@ -1,0 +1,25 @@
+# HTTP Server
+[server]
+Address = ":8199"
+ServerAgent = "pay_get"
+#ServerRoot = "public"
+LogPath = "./log/gf-app/server"
+
+# Logger.
+[logger]
+Path = "./log/gf-app"
+Level = "all"
+Stdout = true
+
+# Database.
+[database]
+link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
+debug = true
+# Database logger.
+[database.logger]
+Path = "/tmp/log/gf-app/sql"
+Level = "all"
+Stdout = true
+[gfcli]
+[[gfcli.gen.dao]]
+link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
