@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	Middleware = &middleware{}
+	Middleware = middleware{}
 )
 
 type middleware struct {

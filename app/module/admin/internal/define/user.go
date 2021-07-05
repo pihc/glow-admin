@@ -1,46 +1,102 @@
 package define
 
 import (
-	"github.com/gogf/gf/os/gtime"
 	"payget/app/model"
+	"payget/library/query"
+	"strings"
+
+	"xorm.io/builder"
 )
 
-type RspUserInfo struct {
-	Id           uint        `orm:"id,primary"    json:"id"`           // 主键ID
-	Realname     string      `orm:"realname"      json:"realname"`     // 真实姓名
-	Nickname     string      `orm:"nickname"      json:"nickname"`     // 昵称
-	Gender       uint        `orm:"gender"        json:"gender"`       // 性别:1男 2女 3保密
-	Avatar       string      `orm:"avatar"        json:"avatar"`       // 头像
-	Mobile       string      `orm:"mobile"        json:"mobile"`       // 手机号码
-	Email        string      `orm:"email"         json:"email"`        // 邮箱地址
-	Birthday     *gtime.Time `orm:"birthday"      json:"birthday"`     // 出生日期
-	DeptId       uint        `orm:"dept_id"       json:"deptId"`       // 部门ID
-	LevelId      uint        `orm:"level_id"      json:"levelId"`      // 职级ID
-	PositionId   uint        `orm:"position_id"   json:"positionId"`   // 岗位ID
-	ProvinceCode string      `orm:"province_code" json:"provinceCode"` // 省份ID
-	CityCode     string      `orm:"city_code"     json:"cityCode"`     // 市区ID
-	DistrictCode string      `orm:"district_code" json:"districtCode"` // 区县ID
-	Address      string      `orm:"address"       json:"address"`      // 详细地址
-	CityName     string      `orm:"city_name"     json:"cityName"`     // 所属城市
-	Username     string      `orm:"username"      json:"username"`     // 登录用户名
-	Password     string      `orm:"password"      json:"password"`     // 登录密码
-	Salt         string      `orm:"salt"          json:"salt"`         // 盐加密
-	Intro        string      `orm:"intro"         json:"intro"`        // 个人简介
-	Status       uint        `orm:"status"        json:"status"`       // 状态：1正常 2禁用
-	Note         string      `orm:"note"          json:"note"`         // 备注
-	Sort         uint        `orm:"sort"          json:"sort"`         // 显示顺序
-	LoginNum     uint        `orm:"login_num"     json:"loginNum"`     // 登录次数
-	LoginIp      string      `orm:"login_ip"      json:"loginIp"`      // 最近登录IP
-	LoginTime    *gtime.Time `orm:"login_time"    json:"loginTime"`    // 最近登录时间
-	CreateUser   uint        `orm:"create_user"   json:"createUser"`   // 添加人
-	CreateTime   *gtime.Time `orm:"create_time"   json:"createTime"`   // 创建时间
-	UpdateUser   uint        `orm:"update_user"   json:"updateUser"`   // 更新人
-	UpdateTime   *gtime.Time `orm:"update_time"   json:"updateTime"`   // 更新时间
-	Mark         uint        `orm:"mark"          json:"mark"`         // 有效标识(1正常 0删除)
-	/**
-	 * 角色列表
-	 */
-	Roles          []*model.SysRole `json:"roles"`
-	Authorities    []*model.SysMenu `json:"authorities"`
-	PermissionList []string         `json:"permissionList"`
+// ==========================================================================================
+// API
+// ==========================================================================================
+type UserApiCreateUpdateBase struct {
+	Nickname string `v:"required#请输入昵称"`    // 昵称
+	Username string `v:"required#请输入登录用户名"` // 登录用户名
+	Password string `v:"required#请输入登录密码"`  // 登录密码
+	Avatar   string // 头像
+	Mobile   string // 手机号码
+	Email    string // 邮箱地址
+	Intro    string // 个人简介
+	Note     string // 备注
+	Status   uint   // 状态：1正常 2禁用
+	RoleIds  []uint `v:"required#请选择角色"`
+}
+
+type UserApiDoCreateReq struct {
+	UserApiCreateUpdateBase
+}
+
+type UserApiDoUpdateReq struct {
+	UserApiCreateUpdateBase
+	Id uint `v:"min:1#请选择需要修改的用户"`
+}
+
+type UserApiChangeStatusReq struct {
+	Id     uint `v:"min:1#请选择需要修改的用户"`
+	Status uint
+}
+
+// ==========================================================================================
+// Service
+// ==========================================================================================
+type UserServiceDoCreateReq struct {
+	UserServiceCreateUpdateBase
+}
+
+type UserServiceDoUpdateReq struct {
+	UserServiceCreateUpdateBase
+	Id uint
+}
+
+type UserServiceCreateUpdateBase struct {
+	Nickname string // 昵称
+	Username string // 登录用户名
+	Password string // 登录密码
+	Mobile   string // 手机号码
+	Email    string // 邮箱地址
+	Intro    string // 个人简介
+	Note     string // 备注
+	Status   uint   // 状态：1正常 2禁用
+	RoleIds  []uint
+}
+
+type UserServiceCreateRes struct {
+	UserId uint `json:"user_id"`
+}
+
+type UserInfoRes struct {
+	model.SysUser
+	Roles []*model.SysRole `json:"roles"`
+	//Authorities    []*model.SysMenu `json:"authorities"`
+	Permissions []string `json:"permissions"`
+}
+
+// 查询请求
+type UserServiceGetListReq struct {
+	query.Params
+	Nickname string `json:"nickname"`
+	Username string `json:"username"`
+}
+
+func (q *UserServiceGetListReq) Build() builder.Cond {
+	cond := builder.NewCond()
+	if q.Nickname != "" {
+		cond = cond.And(builder.Like{"sys_user.nickname", strings.TrimSpace(q.Nickname)})
+	}
+	if q.Username != "" {
+		cond = cond.And(builder.Like{"sys_user.username", strings.TrimSpace(q.Username)})
+	}
+	return cond
+}
+
+type UserServiceGetListRes struct {
+	model.SysUser
+	Roles []*model.SysRole `json:"roles"`
+}
+
+type UserServiceChangeStatusReq struct {
+	Id     uint
+	Status uint
 }

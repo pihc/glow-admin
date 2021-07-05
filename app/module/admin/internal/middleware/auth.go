@@ -27,7 +27,7 @@ func init() {
 		Key:             []byte("secret key"),
 		Timeout:         time.Hour * 30,
 		MaxRefresh:      time.Hour * 30,
-		IdentityKey:     "id",
+		IdentityKey:     "uid",
 		TokenLookup:     "header: Authorization",
 		TokenHeadName:   "Bearer",
 		TimeFunc:        time.Now,
@@ -102,8 +102,8 @@ func RefreshResponse(r *ghttp.Request, code int, token string, expire time.Time)
 // LogoutResponse is used to set token blacklist.
 func LogoutResponse(r *ghttp.Request, code int) {
 	r.Response.WriteJson(g.Map{
-		"code":    code,
-		"message": "success",
+		"code": code,
+		"msg":  "success",
 	})
 	r.ExitAll()
 }
@@ -138,6 +138,6 @@ func Authenticator(r *ghttp.Request) (interface{}, error) {
 	//}
 
 	return g.Map{
-		"id": user.Id,
+		"uid": user.Id,
 	}, nil
 }

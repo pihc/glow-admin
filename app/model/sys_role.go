@@ -12,3 +12,7 @@ import (
 type SysRole internal.SysRole
 
 // Fill with you ideas below.
+type RoleWithUserId struct {
+	SysRole
+	UserId uint `json:"user_id"`
+}

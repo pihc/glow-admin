@@ -6,6 +6,9 @@ package dao
 
 import (
 	"payget/app/dao/internal"
+	"payget/app/model"
+
+	"github.com/gogf/gf/util/gconv"
 )
 
 // sysRoleDao is the manager for logic model data accessing
@@ -26,4 +29,24 @@ func init() {
 	}
 }
 
-// Fill with you ideas below.
+// 通过用户Id获取角色列表
+func GetRoleList(userIds []uint) (map[uint][]*model.SysRole, error) {
+	var roles []*model.RoleWithUserId
+	db := SysUserRole.As("a").
+		Fields("a.user_id,b.*").
+		InnerJoin("sys_role as b", "a.role_id=b.id").
+		WhereIn("a.user_id", userIds)
+	if err := db.Scan(&roles); err != nil {
+		return nil, err
+	}
+
+	temp := make(map[uint][]*model.SysRole, 0)
+	for _, v := range roles {
+		var role model.SysRole
+		if err := gconv.Struct(v, &role); err != nil {
+			return nil, err
+		}
+		temp[v.UserId] = append(temp[v.UserId], &role)
+	}
+	return temp, nil
+}

@@ -21,17 +21,16 @@ type SysRoleDao struct {
 
 // SysRoleColumns defines and stores column names for table sys_role.
 type sysRoleColumns struct {
-	Id         string // 主键ID
-	Name       string // 角色名称
-	Code       string // 角色标签
-	Status     string // 状态：1正常 2禁用
-	Note       string // 备注
-	Sort       string // 排序
-	CreateUser string // 添加人
-	CreateTime string // 添加时间
-	UpdateUser string // 更新人
-	UpdateTime string // 更新时间
-	Mark       string // 有效标识(1正常 0删除)
+	Id        string // 主键ID
+	Name      string // 角色名称
+	Code      string // 角色标签
+	Status    string // 状态：1正常 2禁用
+	Note      string // 备注
+	Sort      string // 排序
+	CreatedBy string // 添加人
+	CreatedAt string // 添加时间
+	UpdateBy  string // 更新人
+	UpdatedAt string // 更新时间
 }
 
 func NewSysRoleDao() *SysRoleDao {
@@ -40,17 +39,16 @@ func NewSysRoleDao() *SysRoleDao {
 		DB:    g.DB("default"),
 		Table: "sys_role",
 		Columns: sysRoleColumns{
-			Id:         "id",
-			Name:       "name",
-			Code:       "code",
-			Status:     "status",
-			Note:       "note",
-			Sort:       "sort",
-			CreateUser: "create_user",
-			CreateTime: "create_time",
-			UpdateUser: "update_user",
-			UpdateTime: "update_time",
-			Mark:       "mark",
+			Id:        "id",
+			Name:      "name",
+			Code:      "code",
+			Status:    "status",
+			Note:      "note",
+			Sort:      "sort",
+			CreatedBy: "created_by",
+			CreatedAt: "created_at",
+			UpdateBy:  "update_by",
+			UpdatedAt: "updated_at",
 		},
 	}
 }

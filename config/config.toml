@@ -1,25 +1,28 @@
 # HTTP Server
 [server]
-Address = ":8199"
-ServerAgent = "pay_get"
-#ServerRoot = "public"
-LogPath = "./log/gf-app/server"
+  address = ":8199"
+  serverAgent = "pay_get"
+  #ServerRoot = "public"
+  logPath = "./log/gf-app/server"
 
 # Logger.
 [logger]
-Path = "./log/gf-app"
-Level = "all"
-Stdout = true
+  path = "./log/gf-app"
+  level = "all"
+  stdout = true
 
 # Database.
 [database]
-link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
-debug = true
-# Database logger.
-[database.logger]
-Path = "/tmp/log/gf-app/sql"
-Level = "all"
-Stdout = true
+  link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
+  debug = true
+  # Database logger.
+  [database.logger]
+    path = "/tmp/log/gf-app/sql"
+    level = "all"
+    stdout = true
+
 [gfcli]
-[[gfcli.gen.dao]]
-link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
+  [[gfcli.gen.dao]]
+    link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
+    tables = "sys_role,sys_user,sys_menu"
+    jsonCase = "Snake"

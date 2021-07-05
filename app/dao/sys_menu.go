@@ -39,6 +39,7 @@ func GetPermissionsListByUserId(userID, pid uint) (res []*model.DTOMenu, err err
 	err = db.Scan(&res)
 	return
 }
+
 func GetPermissionList(userID uint) (res []*model.DTOMenu, err error) {
 	db := SysMenu.As("m").
 		Fields("DISTINCT m.permission").

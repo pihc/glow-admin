@@ -25,7 +25,6 @@ func (m *menuService) GetChildMenuAll(pid uint) (list []*model.DTOMenu, err erro
 		builder.Eq{"pid": pid},
 		builder.Eq{"status": 1},
 		builder.Eq{"type": 0},
-		builder.Eq{"mark": 1},
 	)
 	err = query.All(dao.SysMenu.OrderAsc("sort"), cond, &list)
 	if err != nil {

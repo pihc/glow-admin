@@ -2,8 +2,9 @@ package query
 
 import (
 	"fmt"
-	"github.com/gogf/gf/database/gdb"
 	"math"
+
+	"github.com/gogf/gf/database/gdb"
 	"xorm.io/builder"
 )
 
@@ -95,14 +96,14 @@ func Page(m *gdb.Model, query Query, bean interface{}) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = m.Scan(bean)
+	err = listM.Scan(bean)
 	if err != nil {
 		return nil, err
 	}
 	return NewResult(pageIndex, pageSize, total).WithRecords(bean), nil
 }
 
-//All 分页查询
+//All
 func All(m *gdb.Model, cond builder.Cond, bean interface{}) error {
 	sql, args, err := builder.ToSQL(cond)
 	if err != nil {

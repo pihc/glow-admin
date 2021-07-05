@@ -33,11 +33,10 @@ type sysMenuColumns struct {
 	Status     string // 是否显示：1显示 2不显示
 	Note       string // 备注
 	Sort       string // 显示顺序
-	CreateUser string // 添加人
-	CreateTime string // 创建时间
-	UpdateUser string // 更新人
-	UpdateTime string // 更新时间
-	Mark       string // 有效标识
+	CreatedBy  string // 添加人
+	CreatedAt  string // 添加时间
+	UpdateBy   string // 更新人
+	UpdatedAt  string // 更新时间
 }
 
 func NewSysMenuDao() *SysMenuDao {
@@ -58,11 +57,10 @@ func NewSysMenuDao() *SysMenuDao {
 			Status:     "status",
 			Note:       "note",
 			Sort:       "sort",
-			CreateUser: "create_user",
-			CreateTime: "create_time",
-			UpdateUser: "update_user",
-			UpdateTime: "update_time",
-			Mark:       "mark",
+			CreatedBy:  "created_by",
+			CreatedAt:  "created_at",
+			UpdateBy:   "update_by",
+			UpdatedAt:  "updated_at",
 		},
 	}
 }

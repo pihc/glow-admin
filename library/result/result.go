@@ -3,9 +3,9 @@ package result
 import "fmt"
 
 type Result struct {
-	Code    int         `json:"code"`
-	Data    interface{} `json:"data"`
-	Message string      `json:"message"`
+	Code int         `json:"code"`
+	Data interface{} `json:"data"`
+	Msg  string      `json:"msg"`
 }
 
 func Response(data interface{}, err error) Result {
@@ -16,27 +16,27 @@ func Response(data interface{}, err error) Result {
 }
 func Success(data interface{}, message string) Result {
 	return Result{
-		Code:    0,
-		Data:    data,
-		Message: message,
+		Code: 0,
+		Data: data,
+		Msg:  message,
 	}
 }
 func Errorf(format string, a ...interface{}) Result {
 	return Result{
-		Code:    500,
-		Message: fmt.Sprintf(format, a...),
+		Code: 500,
+		Msg:  fmt.Sprintf(format, a...),
 	}
 }
 func Error(err error) Result {
 	return Result{
-		Code:    500,
-		Message: err.Error(),
+		Code: 500,
+		Msg:  err.Error(),
 	}
 }
 
 func ErrorCode(code int, message string) Result {
 	return Result{
-		Code:    code,
-		Message: message,
+		Code: code,
+		Msg:  message,
 	}
 }

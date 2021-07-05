@@ -1,3 +1,3 @@
-# GoFrame Project
+### 基于goframe框架，包含RBAC权限管理，可用来快速开发后台管理系统
 
-https://goframe.org
+
