@@ -14,7 +14,6 @@ func Init() {
 	// 前台系统路由注册
 	s.Group("/admin", func(group *ghttp.RouterGroup) {
 		group.GET("/captcha", respond.Convert(api.Index.Captcha))
-		//group.POST("/login", respond.Convert(api.Index.Login))
 		group.POST("/login", middleware.Auth.LoginHandler)
 		group.POST("/refresh_token", middleware.Auth.RefreshHandler)
 		group.POST("/logout", middleware.Auth.LogoutHandler)
@@ -31,6 +30,7 @@ func Init() {
 			group.POST("/user/delete/:id", respond.Convert(api.User.Delete))
 			group.POST("/user/change_status", respond.Convert(api.User.ChangeStatus))
 			group.POST("/user/reset_pwd/:id", respond.Convert(api.User.ResetPassword))
+			group.POST("/user/change_pwd", respond.Convert(api.User.ChangePwd))
 
 			// 角色
 			group.GET("/role/index", respond.Convert(api.Role.GetList))
@@ -40,6 +40,13 @@ func Init() {
 			group.GET("/role/menus/:id", respond.Convert(api.Role.GetMenus))
 			group.POST("/role/menus", respond.Convert(api.Role.SetMenus))
 			group.GET("/role/all", respond.Convert(api.Role.All))
+
+			// 菜单
+			group.GET("/menu/index", respond.Convert(api.Menu.GetList))
+			group.POST("/menu/delete/:id", respond.Convert(api.Menu.Delete))
+			group.GET("/menu/info/:id", respond.Convert(api.Menu.GetDetail))
+			group.POST("/menu/add", respond.Convert(api.Menu.Create))
+			group.POST("/menu/edit", respond.Convert(api.Menu.Update))
 
 			//group.GET("/native", respond.Convert(api.Hello.Native))
 			//group.GET("/string", respond.Convert(api.Hello.String))

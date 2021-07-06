@@ -11,6 +11,19 @@ import (
 // ==========================================================================================
 // API
 // ==========================================================================================
+type UserApiResetPwdReq struct {
+	Id uint `v:"min:1#请选择需要修改的用户"`
+}
+
+type UserApiDeleteReq struct {
+	Id uint `v:"min:1#请选择需要删除的用户"`
+}
+
+type UserApiChangePwdReq struct {
+	OldPassword string `v:"required#请输入旧密码"`
+	NewPassword string `v:"required#请输入新密码"`
+}
+
 type UserApiCreateUpdateBase struct {
 	Nickname string `v:"required#请输入昵称"`    // 昵称
 	Username string `v:"required#请输入登录用户名"` // 登录用户名
@@ -99,4 +112,9 @@ type UserServiceGetListRes struct {
 type UserServiceChangeStatusReq struct {
 	Id     uint
 	Status uint
+}
+
+type UserServiceChangePwdReq struct {
+	OldPassword string
+	NewPassword string
 }

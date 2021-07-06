@@ -66,15 +66,26 @@ func (a *roleApi) Update(r *ghttp.Request) respond.Json {
 }
 
 func (a *roleApi) Delete(r *ghttp.Request) respond.Json {
-	if err := service.Role.Delete(r.Context(), r.GetUint("id")); err != nil {
+	var (
+		data *define.RoleApiDeleteReq
+	)
+	if err := r.Parse(&data); err != nil {
+		result.Error(err)
+	}
+	if err := service.Role.Delete(r.Context(), data.Id); err != nil {
 		return result.Error(err)
 	}
 	return result.Success("", "删除成功")
 }
 
 func (a *roleApi) GetMenus(r *ghttp.Request) respond.Json {
-	roleId := r.GetUint("id")
-	return result.Response(service.Role.GetMenus(roleId))
+	var (
+		data *define.RoleApiGetMenusReq
+	)
+	if err := r.Parse(&data); err != nil {
+		result.Error(err)
+	}
+	return result.Response(service.Role.GetMenus(data.Id))
 }
 
 func (a *roleApi) SetMenus(r *ghttp.Request) respond.Json {

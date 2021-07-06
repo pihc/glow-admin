@@ -16,3 +16,8 @@ type DTOMenu struct {
 	SysMenu
 	Children []*DTOMenu `orm:"-" json:"children"`
 }
+
+const (
+	MenuTypeMenu = 0 // 菜单
+	MenuTypeBtn  = 1 // 按钮
+)

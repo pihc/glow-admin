@@ -11,6 +11,13 @@ import (
 // ==========================================================================================
 // API
 // ==========================================================================================
+type RoleApiDeleteReq struct {
+	Id uint `v:"min:1#请选择需要删除的角色"`
+}
+
+type RoleApiGetMenusReq struct {
+	Id uint `v:"min:1#请选择角色"`
+}
 
 type RoleApiCreateUpdateBase struct {
 	Name string `v:"required#请输入角色名称"`

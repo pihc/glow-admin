@@ -48,24 +48,18 @@ func (s *userService) GetUserInfo(ctx context.Context) (*define.UserInfoRes, err
 	if err != nil {
 		return nil, err
 	}
-	// 拷贝属性
+
 	var userVO define.UserInfoRes
 	if err := gconv.Struct(user, &userVO); err != nil {
 		return nil, err
 	}
+	// 角色
 	roles, err := Role.GetRolesByUserId(curUser.Id)
 	if err != nil {
 		return nil, err
 	}
 	userVO.Roles = roles
-
-	// 获取权限菜单
-	//menus,err := Menu.GetMenuList(curUser.Id)
-	//if err!=nil{
-	//	return nil,err
-	//}
-	//userVO.men
-	//userInfoVo.setAuthorities(menuList)
+	// 权限
 	perms, err := Menu.GetPermissionList(user.Id)
 	if err != nil {
 		return nil, err
@@ -198,5 +192,30 @@ func (s *userService) ResetPassword(ctx context.Context, id uint) error {
 		dao.SysUser.Columns.Password: password,
 		dao.SysUser.Columns.Salt:     salt,
 	}).Update()
+	return err
+}
+
+func (s *userService) ChangePwd(ctx context.Context, req *define.UserServiceChangePwdReq) error {
+	curUser := shared.Context.Get(ctx).User
+	var user model.SysUser
+	err := dao.SysUser.WherePri(curUser.Id).Scan(&user)
+	if err != nil {
+		return err
+	}
+
+	oldPwd := tools.GenPassword(req.OldPassword, user.Salt)
+	if user.Password != oldPwd {
+		return gerror.New("密码错误")
+	}
+
+	salt := grand.Letters(6)
+	newPwd := tools.GenPassword(req.NewPassword, salt)
+
+	_, err = dao.SysUser.Ctx(ctx).Where(dao.SysUser.Columns.Id, user.Id).Data(model.SysUser{
+		Password: newPwd,
+		Salt:     salt,
+		UpdateBy: curUser.Id,
+	}).Update()
+
 	return err
 }

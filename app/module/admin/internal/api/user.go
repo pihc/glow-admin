@@ -62,7 +62,13 @@ func (a *userApi) Update(r *ghttp.Request) respond.Json {
 }
 
 func (a *userApi) Delete(r *ghttp.Request) respond.Json {
-	if err := service.User.Delete(r.Context(), r.GetUint("id")); err != nil {
+	var (
+		data *define.UserApiDeleteReq
+	)
+	if err := r.Parse(&data); err != nil {
+		result.Error(err)
+	}
+	if err := service.User.Delete(r.Context(), data.Id); err != nil {
 		return result.Error(err)
 	}
 	return result.Success("", "删除成功")
@@ -86,8 +92,31 @@ func (a *userApi) ChangeStatus(r *ghttp.Request) respond.Json {
 }
 
 func (a *userApi) ResetPassword(r *ghttp.Request) respond.Json {
-	if err := service.User.ResetPassword(r.Context(), r.GetUint("id")); err != nil {
+	var (
+		data *define.UserApiResetPwdReq
+	)
+	if err := r.Parse(&data); err != nil {
+		result.Error(err)
+	}
+	if err := service.User.ResetPassword(r.Context(), data.Id); err != nil {
 		return result.Error(err)
 	}
 	return result.Success("", "重置成功")
+}
+
+func (a *userApi) ChangePwd(r *ghttp.Request) respond.Json {
+	var (
+		data             *define.UserApiChangePwdReq
+		serviceUpdateReq *define.UserServiceChangePwdReq
+	)
+	if err := r.Parse(&data); err != nil {
+		result.Error(err)
+	}
+	if err := gconv.Struct(data, &serviceUpdateReq); err != nil {
+		return result.Error(err)
+	}
+	if err := service.User.ChangePwd(r.Context(), serviceUpdateReq); err != nil {
+		return result.Error(err)
+	}
+	return result.Success("", "修改成功")
 }
