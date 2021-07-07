@@ -26,6 +26,6 @@ type SysUser struct {
 	LoginTime *gtime.Time `orm:"login_time" json:"login_time"` // 最近登录时间
 	CreatedBy uint        `orm:"created_by" json:"created_by"` // 添加人
 	CreatedAt *gtime.Time `orm:"created_at" json:"created_at"` // 添加时间
-	UpdateBy  uint        `orm:"update_by"  json:"update_by"`  // 更新人
+	UpdatedBy uint        `orm:"updated_by" json:"updated_by"` // 更新人
 	UpdatedAt *gtime.Time `orm:"updated_at" json:"updated_at"` // 更新时间
 }

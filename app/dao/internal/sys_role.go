@@ -24,12 +24,11 @@ type sysRoleColumns struct {
 	Id        string // 主键ID
 	Name      string // 角色名称
 	Code      string // 角色标签
-	Status    string // 状态：1正常 2禁用
 	Note      string // 备注
 	Sort      string // 排序
 	CreatedBy string // 添加人
 	CreatedAt string // 添加时间
-	UpdateBy  string // 更新人
+	UpdatedBy string // 更新人
 	UpdatedAt string // 更新时间
 }
 
@@ -42,12 +41,11 @@ func NewSysRoleDao() *SysRoleDao {
 			Id:        "id",
 			Name:      "name",
 			Code:      "code",
-			Status:    "status",
 			Note:      "note",
 			Sort:      "sort",
 			CreatedBy: "created_by",
 			CreatedAt: "created_at",
-			UpdateBy:  "update_by",
+			UpdatedBy: "updated_by",
 			UpdatedAt: "updated_at",
 		},
 	}

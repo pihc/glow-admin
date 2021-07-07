@@ -20,7 +20,7 @@ func (a *userApi) GetList(r *ghttp.Request) respond.Json {
 		data *define.UserServiceGetListReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	return result.Response(service.User.GetList(r.Context(), data))
 }
@@ -41,7 +41,7 @@ func (a *userApi) Create(r *ghttp.Request) respond.Json {
 	if err != nil {
 		return result.Error(err)
 	}
-	return result.Success(res, "")
+	return result.Success(res, "添加成功")
 }
 
 func (a *userApi) Update(r *ghttp.Request) respond.Json {
@@ -66,7 +66,7 @@ func (a *userApi) Delete(r *ghttp.Request) respond.Json {
 		data *define.UserApiDeleteReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	if err := service.User.Delete(r.Context(), data.Id); err != nil {
 		return result.Error(err)
@@ -96,7 +96,7 @@ func (a *userApi) ResetPassword(r *ghttp.Request) respond.Json {
 		data *define.UserApiResetPwdReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	if err := service.User.ResetPassword(r.Context(), data.Id); err != nil {
 		return result.Error(err)
@@ -110,7 +110,7 @@ func (a *userApi) ChangePwd(r *ghttp.Request) respond.Json {
 		serviceUpdateReq *define.UserServiceChangePwdReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	if err := gconv.Struct(data, &serviceUpdateReq); err != nil {
 		return result.Error(err)

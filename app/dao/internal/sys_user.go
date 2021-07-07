@@ -37,7 +37,7 @@ type sysUserColumns struct {
 	LoginTime string // 最近登录时间
 	CreatedBy string // 添加人
 	CreatedAt string // 添加时间
-	UpdateBy  string // 更新人
+	UpdatedBy string // 更新人
 	UpdatedAt string // 更新时间
 }
 
@@ -63,7 +63,7 @@ func NewSysUserDao() *SysUserDao {
 			LoginTime: "login_time",
 			CreatedBy: "created_by",
 			CreatedAt: "created_at",
-			UpdateBy:  "update_by",
+			UpdatedBy: "updated_by",
 			UpdatedAt: "updated_at",
 		},
 	}

@@ -44,13 +44,10 @@ func (s *menuService) GetDetail(ctx context.Context, id uint) (*model.SysMenu, e
 
 func (s *menuService) Create(ctx context.Context, req *define.MenuServiceDoCreateReq) (*define.MenuServiceCreateRes, error) {
 	curUser := shared.Context.Get(ctx).User
-	var menu model.SysMenu
-	if err := gconv.Struct(req, &menu); err != nil {
-		return nil, err
-	}
-	menu.CreatedBy = curUser.Id
+	menuMap := gconv.Map(req)
+	menuMap["created_by"] = curUser.Id
 	// 添加菜单
-	lastId, err := dao.SysMenu.Ctx(ctx).Data(menu).InsertAndGetId()
+	lastId, err := dao.SysMenu.Ctx(ctx).Data(menuMap).InsertAndGetId()
 	if err != nil {
 		return nil, err
 	}
@@ -80,12 +77,9 @@ func (s *menuService) Create(ctx context.Context, req *define.MenuServiceDoCreat
 
 func (s *menuService) Update(ctx context.Context, req *define.MenuServiceDoUpdateReq) error {
 	curUser := shared.Context.Get(ctx).User
-	var menu model.SysMenu
-	if err := gconv.Struct(req, &menu); err != nil {
-		return err
-	}
-	menu.UpdateBy = curUser.Id
-	_, err := dao.SysMenu.Ctx(ctx).Data(menu).FieldsEx(dao.SysMenu.Columns.Id).Where(dao.SysMenu.Columns.Id, req.Id).Update()
+	menuMap := gconv.Map(req)
+	menuMap["updated_by"] = curUser.Id
+	_, err := dao.SysMenu.Ctx(ctx).Data(menuMap).FieldsEx(dao.SysMenu.Columns.Id).Where(dao.SysMenu.Columns.Id, req.Id).Update()
 	return err
 }
 
@@ -142,8 +136,8 @@ func (s *menuService) GetPermissionList(userID uint) ([]string, error) {
 	if userID == 1 {
 		// 超级管理员
 		if err := dao.SysMenu.Data(g.Map{
-			dao.SysMenu.Columns.Type:   1,
-			dao.SysMenu.Columns.Status: 1,
+			dao.SysMenu.Columns.Type:   model.MenuTypeBtn,
+			dao.SysMenu.Columns.Status: model.MenuStatusShow,
 		}).Scan(&perm); err != nil {
 			return nil, err
 		}

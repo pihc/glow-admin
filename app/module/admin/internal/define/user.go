@@ -16,7 +16,7 @@ type UserApiResetPwdReq struct {
 }
 
 type UserApiDeleteReq struct {
-	Id uint `v:"min:1#请选择需要删除的用户"`
+	Id uint `v:"min:2#请选择id>1的用户进行删除"`
 }
 
 type UserApiChangePwdReq struct {
@@ -33,7 +33,7 @@ type UserApiCreateUpdateBase struct {
 	Email    string // 邮箱地址
 	Intro    string // 个人简介
 	Note     string // 备注
-	Status   uint   // 状态：1正常 2禁用
+	Status   uint   `v:"required|between:1,2#请选择状态"` // 状态：1正常 2禁用
 	RoleIds  []uint `v:"required#请选择角色"`
 }
 

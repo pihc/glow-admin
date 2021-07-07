@@ -33,7 +33,7 @@ func (s *roleService) GetList(ctx context.Context, req *define.RoleServiceGetLis
 
 func (s *roleService) All() ([]*model.SysRole, error) {
 	var temp []*model.SysRole
-	err := dao.SysRole.Where("status=1").Scan(&temp)
+	err := dao.SysRole.Scan(&temp)
 	if err != nil {
 		return nil, err
 	}
@@ -43,12 +43,9 @@ func (s *roleService) All() ([]*model.SysRole, error) {
 
 func (s *roleService) Create(ctx context.Context, req *define.RoleServiceDoCreateReq) (*define.RoleServiceCreateRes, error) {
 	curUser := shared.Context.Get(ctx).User
-	var role model.SysRole
-	if err := gconv.Struct(req, &role); err != nil {
-		return nil, err
-	}
-	role.CreatedBy = curUser.Id
-	result, err := dao.SysRole.Ctx(ctx).Data(role).Insert()
+	roleMap := gconv.Map(req)
+	roleMap["created_by"] = curUser.Id
+	result, err := dao.SysRole.Ctx(ctx).Data(roleMap).Insert()
 	if err != nil {
 		return nil, err
 	}
@@ -61,14 +58,11 @@ func (s *roleService) Create(ctx context.Context, req *define.RoleServiceDoCreat
 
 func (s *roleService) Update(ctx context.Context, req *define.RoleServiceDoUpdateReq) error {
 	curUser := shared.Context.Get(ctx).User
-	var role model.SysRole
-	if err := gconv.Struct(req, &role); err != nil {
-		return err
-	}
-	role.UpdateBy = curUser.Id
+	roleMap := gconv.Map(req)
+	roleMap["updated_by"] = curUser.Id
 	_, err := dao.SysRole.
 		Ctx(ctx).
-		Data(role).
+		Data(roleMap).
 		FieldsEx(dao.SysRole.Columns.Id).
 		Where(dao.SysRole.Columns.Id, req.Id).
 		Update()

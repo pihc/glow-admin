@@ -18,6 +18,8 @@ type DTOMenu struct {
 }
 
 const (
-	MenuTypeMenu = 0 // 菜单
-	MenuTypeBtn  = 1 // 按钮
+	MenuTypeMenu     = 0 // 菜单
+	MenuTypeBtn      = 1 // 按钮
+	MenuStatusShow   = 1 // 展示
+	MenuStatusHidden = 0 // 隐藏
 )

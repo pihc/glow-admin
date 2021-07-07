@@ -34,8 +34,8 @@ func (s *userService) Login(ctx context.Context, dto model.LoginDTO) (*model.Sys
 	if err := record.Struct(&user); err != nil {
 		return nil, err
 	}
-
-	if user.Password != tools.GenPassword(dto.Password, user.Salt) {
+	pwd := tools.GenPassword(dto.Password, user.Salt)
+	if user.Password != pwd {
 		return nil, gerror.New("用户名或密码错误")
 	}
 	return &user, nil
@@ -44,7 +44,7 @@ func (s *userService) Login(ctx context.Context, dto model.LoginDTO) (*model.Sys
 func (s *userService) GetUserInfo(ctx context.Context) (*define.UserInfoRes, error) {
 	curUser := shared.Context.Get(ctx).User
 	var user model.SysUser
-	err := dao.SysUser.Data(g.Map{dao.SysUser.Columns.Id: curUser.Id}).Scan(&user)
+	err := dao.SysUser.WherePri(curUser.Id).Scan(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (s *userService) GetUserInfo(ctx context.Context) (*define.UserInfoRes, err
 		return nil, err
 	}
 	// 角色
-	roles, err := Role.GetRolesByUserId(curUser.Id)
+	roles, err := Role.GetRolesByUserId(user.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -97,18 +97,15 @@ func (s *userService) GetList(ctx context.Context, req *define.UserServiceGetLis
 
 func (s *userService) Create(ctx context.Context, req *define.UserServiceDoCreateReq) (*define.UserServiceCreateRes, error) {
 	curUser := shared.Context.Get(ctx).User
-	var user model.SysUser
-	if err := gconv.Struct(req, &user); err != nil {
-		return nil, err
-	}
-	user.CreatedBy = curUser.Id
-	user.Salt = grand.Letters(6) // 盐
-	user.Password = tools.GenPassword(req.Password, user.Salt)
+	userMap := gconv.Map(req)
+	userMap["created_by"] = curUser.Id
+	userMap["salt"] = grand.Letters(6) // 盐
+	userMap["password"] = tools.GenPassword(req.Password, userMap["salt"].(string))
 
 	lastId := 0
 	if err := dao.SysRole.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		// 新增用户
-		lastId, err := dao.SysUser.Ctx(ctx).Data(user).InsertAndGetId()
+		lastId, err := dao.SysUser.Ctx(ctx).Data(userMap).InsertAndGetId()
 		if err != nil {
 			return err
 		}
@@ -134,20 +131,17 @@ func (s *userService) Create(ctx context.Context, req *define.UserServiceDoCreat
 
 func (s *userService) Update(ctx context.Context, req *define.UserServiceDoUpdateReq) error {
 	curUser := shared.Context.Get(ctx).User
-	var user model.SysUser
-	if err := gconv.Struct(req, &user); err != nil {
-		return err
-	}
-	user.UpdateBy = curUser.Id
+	userMap := gconv.Map(req)
+	userMap["updated_by"] = curUser.Id
 
 	return dao.SysRole.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		// 编辑用户
-		if _, err := dao.SysUser.Ctx(ctx).Data(user).FieldsEx(dao.SysUser.Columns.Id, dao.SysUser.Columns.Password).Where(dao.SysUser.Columns.Id, req.Id).Update(); err != nil {
+		if _, err := dao.SysUser.Ctx(ctx).Data(userMap).FieldsEx(dao.SysUser.Columns.Id, dao.SysUser.Columns.Password).Where(dao.SysUser.Columns.Id, req.Id).Update(); err != nil {
 			return err
 		}
 
 		// 删除用户和角色的关联
-		if _, err := dao.SysUserRole.Ctx(ctx).Where(dao.SysUserRole.Columns.UserId, user.Id).Delete(); err != nil {
+		if _, err := dao.SysUserRole.Ctx(ctx).Where(dao.SysUserRole.Columns.UserId, req.Id).Delete(); err != nil {
 			return err
 		}
 
@@ -155,7 +149,7 @@ func (s *userService) Update(ctx context.Context, req *define.UserServiceDoUpdat
 		var temp []*model.SysUserRole
 		for _, v := range req.RoleIds {
 			temp = append(temp, &model.SysUserRole{
-				UserId: user.Id,
+				UserId: req.Id,
 				RoleId: v,
 			})
 		}
@@ -212,9 +206,9 @@ func (s *userService) ChangePwd(ctx context.Context, req *define.UserServiceChan
 	newPwd := tools.GenPassword(req.NewPassword, salt)
 
 	_, err = dao.SysUser.Ctx(ctx).Where(dao.SysUser.Columns.Id, user.Id).Data(model.SysUser{
-		Password: newPwd,
-		Salt:     salt,
-		UpdateBy: curUser.Id,
+		Password:  newPwd,
+		Salt:      salt,
+		UpdatedBy: curUser.Id,
 	}).Update()
 
 	return err

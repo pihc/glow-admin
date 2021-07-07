@@ -21,7 +21,7 @@ func (a *menuApi) GetList(r *ghttp.Request) respond.Json {
 		data *define.MenuServiceGetListReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 
 	return result.Response(service.Menu.GetList(r.Context(), data))
@@ -32,7 +32,7 @@ func (a *menuApi) Delete(r *ghttp.Request) respond.Json {
 		data *define.MenuApiDeleteReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	if err := service.Menu.Delete(r.Context(), data.Id); err != nil {
 		return result.Error(err)
@@ -45,7 +45,7 @@ func (a *menuApi) GetDetail(r *ghttp.Request) respond.Json {
 		data *define.MenuApiDetailReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	return result.Response(service.Menu.GetDetail(r.Context(), data.Id))
 }

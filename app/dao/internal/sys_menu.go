@@ -29,13 +29,13 @@ type sysMenuColumns struct {
 	Component  string // 菜单组件
 	Target     string // 目标
 	Permission string // 权限标识
-	Type       string // 类型：1目录 2菜单 3节点
-	Status     string // 是否显示：1显示 2不显示
+	Type       string // 类型：0菜单/1按钮
+	Status     string // 是否显示：0禁用/1正常
 	Note       string // 备注
 	Sort       string // 显示顺序
 	CreatedBy  string // 添加人
 	CreatedAt  string // 添加时间
-	UpdateBy   string // 更新人
+	UpdatedBy  string // 更新人
 	UpdatedAt  string // 更新时间
 }
 
@@ -59,7 +59,7 @@ func NewSysMenuDao() *SysMenuDao {
 			Sort:       "sort",
 			CreatedBy:  "created_by",
 			CreatedAt:  "created_at",
-			UpdateBy:   "update_by",
+			UpdatedBy:  "updated_by",
 			UpdatedAt:  "updated_at",
 		},
 	}

@@ -20,7 +20,7 @@ func (a *roleApi) GetList(r *ghttp.Request) respond.Json {
 		data *define.RoleServiceGetListReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	return result.Response(service.Role.GetList(r.Context(), data))
 }
@@ -44,7 +44,7 @@ func (a *roleApi) Create(r *ghttp.Request) respond.Json {
 	if res, err := service.Role.Create(r.Context(), serviceCreateReq); err != nil {
 		return result.Error(err)
 	} else {
-		return result.Success(res, "")
+		return result.Success(res, "添加成功")
 	}
 }
 
@@ -70,7 +70,7 @@ func (a *roleApi) Delete(r *ghttp.Request) respond.Json {
 		data *define.RoleApiDeleteReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	if err := service.Role.Delete(r.Context(), data.Id); err != nil {
 		return result.Error(err)
@@ -83,7 +83,7 @@ func (a *roleApi) GetMenus(r *ghttp.Request) respond.Json {
 		data *define.RoleApiGetMenusReq
 	)
 	if err := r.Parse(&data); err != nil {
-		result.Error(err)
+		return result.Error(err)
 	}
 	return result.Response(service.Role.GetMenus(data.Id))
 }

@@ -34,7 +34,7 @@ func GetPermissionsListByUserId(userID, pid uint) (res []*model.DTOMenu, err err
 		Fields("DISTINCT m.*").
 		InnerJoin("sys_role_menu as rm", "m.id=rm.menu_id").
 		InnerJoin("sys_user_role as ur", "ur.role_id=rm.role_id").
-		Where("ur.user_id=? AND m.type = 0 AND m.pid=? AND m.`status`=1 AND m.mark=1", userID, pid).
+		Where("ur.user_id=? AND m.type = 0 AND m.pid=? AND m.`status`=1", userID, pid).
 		OrderAsc("m.sort")
 	err = db.Scan(&res)
 	return
@@ -45,8 +45,7 @@ func GetPermissionList(userID uint) (res []*model.DTOMenu, err error) {
 		Fields("DISTINCT m.permission").
 		InnerJoin("sys_role_menu as rm", "m.id=rm.menu_id").
 		InnerJoin("sys_user_role as ur", "ur.role_id=rm.role_id").
-		Where("ur.user_id=? AND m.type = 1 AND m.pid=? AND m.`status`=1 AND m.mark=1", userID).
-		OrderAsc("m.sort")
+		Where("ur.user_id = ? AND m.type = ? AND m.`status` = ?", userID, model.MenuTypeBtn, model.MenuStatusShow)
 	err = db.Scan(&res)
 	return
 }
