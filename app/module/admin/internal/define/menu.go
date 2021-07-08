@@ -32,12 +32,12 @@ type MenuApiCreateUpdateBase struct {
 	Sort       uint   `v:"required#请输入排序"` // 显示顺序
 }
 
-type MenuApiDoCreateReq struct {
+type MenuApiCreateReq struct {
 	Nodes []string // 权限节点，用来快速生成页面按钮权限
 	MenuApiCreateUpdateBase
 }
 
-type MenuApiDoUpdateReq struct {
+type MenuApiUpdateReq struct {
 	MenuApiCreateUpdateBase
 	Id uint `v:"min:1#请选择需要修改的菜单"`
 }
@@ -46,27 +46,29 @@ type MenuApiDoUpdateReq struct {
 // Service
 // ==========================================================================================
 type MenuServiceCreateUpdateBase struct {
-	Pid        uint   // 父级ID
-	Title      string // 菜单标题
-	Icon       string // 图标
-	Path       string // 菜单路径
-	Component  string // 菜单组件
-	Target     string // 目标
-	Permission string // 权限标识
-	Type       uint   // 类型：0 菜单 1节点
-	Status     uint   // 是否显示：1显示 2不显示
-	Note       string // 备注
-	Sort       uint   // 显示顺序
+	Pid        uint   `json:"pid"`        // 父级ID
+	Title      string `json:"title"`      // 菜单标题
+	Icon       string `json:"icon"`       // 图标
+	Path       string `json:"path"`       // 菜单路径
+	Component  string `json:"component"`  // 菜单组件
+	Target     string `json:"target"`     // 目标
+	Permission string `json:"permission"` // 权限标识
+	Type       uint   `json:"type"`       // 类型：0 菜单 1节点
+	Status     uint   `json:"status"`     // 是否显示：1显示 2不显示
+	Note       string `json:"note"`       // 备注
+	Sort       uint   `json:"sort"`       // 显示顺序
 }
 
-type MenuServiceDoCreateReq struct {
-	Nodes []string // 权限节点，用来快速生成页面按钮权限
+type MenuServiceCreateReq struct {
 	MenuServiceCreateUpdateBase
+	Nodes     []string `json:"nodes"` // 权限节点，用来快速生成页面按钮权限
+	CreatedBy uint     `json:"created_by"`
 }
 
-type MenuServiceDoUpdateReq struct {
+type MenuServiceUpdateReq struct {
 	MenuServiceCreateUpdateBase
-	Id uint
+	Id        uint `json:"id"`
+	UpdatedBy uint `json:"updated_by"`
 }
 
 type MenuServiceCreateRes struct {

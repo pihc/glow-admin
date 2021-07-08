@@ -42,12 +42,12 @@ func (s *menuService) GetDetail(ctx context.Context, id uint) (*model.SysMenu, e
 	return &menu, nil
 }
 
-func (s *menuService) Create(ctx context.Context, req *define.MenuServiceDoCreateReq) (*define.MenuServiceCreateRes, error) {
-	curUser := shared.Context.Get(ctx).User
-	menuMap := gconv.Map(req)
-	menuMap["created_by"] = curUser.Id
+func (s *menuService) Create(ctx context.Context, req *define.MenuServiceCreateReq) (*define.MenuServiceCreateRes, error) {
+	if req.CreatedBy == 0 {
+		req.CreatedBy = shared.Context.Get(ctx).User.Id
+	}
 	// 添加菜单
-	lastId, err := dao.SysMenu.Ctx(ctx).Data(menuMap).InsertAndGetId()
+	lastId, err := dao.SysMenu.Ctx(ctx).Data(req).InsertAndGetId()
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (s *menuService) Create(ctx context.Context, req *define.MenuServiceDoCreat
 				Status:     1,
 				Note:       "",
 				Sort:       uint((k + 1) * 5),
-				CreatedBy:  curUser.Id,
+				CreatedBy:  req.CreatedBy,
 			})
 		}
 		if _, err := dao.SysMenu.Ctx(ctx).Data(menus).Insert(); err != nil {
@@ -75,7 +75,7 @@ func (s *menuService) Create(ctx context.Context, req *define.MenuServiceDoCreat
 	return &define.MenuServiceCreateRes{MenuId: uint(lastId)}, nil
 }
 
-func (s *menuService) Update(ctx context.Context, req *define.MenuServiceDoUpdateReq) error {
+func (s *menuService) Update(ctx context.Context, req *define.MenuServiceUpdateReq) error {
 	curUser := shared.Context.Get(ctx).User
 	menuMap := gconv.Map(req)
 	menuMap["updated_by"] = curUser.Id

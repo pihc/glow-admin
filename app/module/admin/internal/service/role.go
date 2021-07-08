@@ -9,8 +9,6 @@ import (
 	"payget/library/query"
 
 	"github.com/gogf/gf/database/gdb"
-	"github.com/gogf/gf/util/gconv"
-
 	"github.com/gogf/gf/errors/gerror"
 
 	"github.com/gogf/gf/frame/g"
@@ -41,31 +39,23 @@ func (s *roleService) All() ([]*model.SysRole, error) {
 	return temp, nil
 }
 
-func (s *roleService) Create(ctx context.Context, req *define.RoleServiceDoCreateReq) (*define.RoleServiceCreateRes, error) {
-	curUser := shared.Context.Get(ctx).User
-	roleMap := gconv.Map(req)
-	roleMap["created_by"] = curUser.Id
-	result, err := dao.SysRole.Ctx(ctx).Data(roleMap).Insert()
+func (s *roleService) Create(ctx context.Context, req *define.RoleServiceCreateReq) (*define.RoleServiceCreateRes, error) {
+	if req.CreatedBy == 0 {
+		req.CreatedBy = shared.Context.Get(ctx).User.Id
+	}
+	lastId, err := dao.SysRole.Ctx(ctx).Data(req).InsertAndGetId()
 	if err != nil {
 		return nil, err
 	}
-	n, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-	return &define.RoleServiceCreateRes{RoleId: uint(n)}, nil
+
+	return &define.RoleServiceCreateRes{RoleId: uint(lastId)}, nil
 }
 
-func (s *roleService) Update(ctx context.Context, req *define.RoleServiceDoUpdateReq) error {
-	curUser := shared.Context.Get(ctx).User
-	roleMap := gconv.Map(req)
-	roleMap["updated_by"] = curUser.Id
-	_, err := dao.SysRole.
-		Ctx(ctx).
-		Data(roleMap).
-		FieldsEx(dao.SysRole.Columns.Id).
-		Where(dao.SysRole.Columns.Id, req.Id).
-		Update()
+func (s *roleService) Update(ctx context.Context, req *define.RoleServiceUpdateReq) error {
+	if req.UpdatedBy == 0 {
+		req.UpdatedBy = shared.Context.Get(ctx).User.Id
+	}
+	_, err := dao.SysRole.Ctx(ctx).Data(req).FieldsEx(dao.SysRole.Columns.Id).Where(dao.SysRole.Columns.Id, req.Id).Update()
 	return err
 }
 

@@ -27,8 +27,8 @@ func (a *userApi) GetList(r *ghttp.Request) respond.Json {
 
 func (a *userApi) Create(r *ghttp.Request) respond.Json {
 	var (
-		data             *define.UserApiDoCreateReq
-		serviceCreateReq *define.UserServiceDoCreateReq
+		data             *define.UserApiCreateReq
+		serviceCreateReq *define.UserServiceCreateReq
 	)
 	if err := r.ParseForm(&data); err != nil {
 		return result.Error(err)
@@ -46,8 +46,8 @@ func (a *userApi) Create(r *ghttp.Request) respond.Json {
 
 func (a *userApi) Update(r *ghttp.Request) respond.Json {
 	var (
-		data             *define.UserApiDoUpdateReq
-		serviceUpdateReq *define.UserServiceDoUpdateReq
+		data             *define.UserApiUpdateReq
+		serviceUpdateReq *define.UserServiceUpdateReq
 	)
 	if err := r.ParseForm(&data); err != nil {
 		return result.Error(err)
@@ -119,4 +119,12 @@ func (a *userApi) ChangePwd(r *ghttp.Request) respond.Json {
 		return result.Error(err)
 	}
 	return result.Success("", "修改成功")
+}
+
+func (a *userApi) Test(r *ghttp.Request) respond.Json {
+	err := service.GenCode.GenData(r.Context(), "sys_config")
+	if err != nil {
+		return result.Error(err)
+	}
+	return result.Success(nil, "success")
 }

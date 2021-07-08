@@ -31,8 +31,8 @@ func (a *roleApi) All(r *ghttp.Request) respond.Json {
 
 func (a *roleApi) Create(r *ghttp.Request) respond.Json {
 	var (
-		data             *define.RoleApiDoCreateReq
-		serviceCreateReq *define.RoleServiceDoCreateReq
+		data             *define.RoleApiCreateReq
+		serviceCreateReq *define.RoleServiceCreateReq
 	)
 	if err := r.ParseForm(&data); err != nil {
 		return result.Error(err)
@@ -50,8 +50,8 @@ func (a *roleApi) Create(r *ghttp.Request) respond.Json {
 
 func (a *roleApi) Update(r *ghttp.Request) respond.Json {
 	var (
-		data             *define.RoleApiDoUpdateReq
-		serviceUpdateReq *define.RoleServiceDoUpdateReq
+		data             *define.RoleApiUpdateReq
+		serviceUpdateReq *define.RoleServiceUpdateReq
 	)
 	if err := r.ParseForm(&data); err != nil {
 		return result.Error(err)

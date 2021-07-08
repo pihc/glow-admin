@@ -18,6 +18,8 @@ func Init() {
 		group.POST("/refresh_token", middleware.Auth.RefreshHandler)
 		group.POST("/logout", middleware.Auth.LogoutHandler)
 
+		group.GET("/test", respond.Convert(api.User.Test))
+
 		group.Group("/", func(group *ghttp.RouterGroup) {
 			group.Middleware(middleware.Admin.Auth)
 			group.GET("/menus", respond.Convert(api.Index.Menus))

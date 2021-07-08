@@ -37,11 +37,11 @@ type UserApiCreateUpdateBase struct {
 	RoleIds  []uint `v:"required#请选择角色"`
 }
 
-type UserApiDoCreateReq struct {
+type UserApiCreateReq struct {
 	UserApiCreateUpdateBase
 }
 
-type UserApiDoUpdateReq struct {
+type UserApiUpdateReq struct {
 	UserApiCreateUpdateBase
 	Id uint `v:"min:1#请选择需要修改的用户"`
 }
@@ -54,25 +54,27 @@ type UserApiChangeStatusReq struct {
 // ==========================================================================================
 // Service
 // ==========================================================================================
-type UserServiceDoCreateReq struct {
+type UserServiceCreateReq struct {
 	UserServiceCreateUpdateBase
+	CreatedBy uint `json:"created_by"`
 }
 
-type UserServiceDoUpdateReq struct {
+type UserServiceUpdateReq struct {
 	UserServiceCreateUpdateBase
-	Id uint
+	Id        uint `json:"id"`
+	UpdatedBy uint `json:"updated_by"`
 }
 
 type UserServiceCreateUpdateBase struct {
-	Nickname string // 昵称
-	Username string // 登录用户名
-	Password string // 登录密码
-	Mobile   string // 手机号码
-	Email    string // 邮箱地址
-	Intro    string // 个人简介
-	Note     string // 备注
-	Status   uint   // 状态：1正常 2禁用
-	RoleIds  []uint
+	Nickname string `json:"nickname"` // 昵称
+	Username string `json:"username"` // 登录用户名
+	Password string `json:"password"` // 登录密码
+	Mobile   string `json:"mobile"`   // 手机号码
+	Email    string `json:"email"`    // 邮箱地址
+	Intro    string `json:"intro"`    // 个人简介
+	Note     string `json:"note"`     // 备注
+	Status   uint   `json:"status"`   // 状态：1正常 2禁用
+	RoleIds  []uint `json:"role_ids"`
 }
 
 type UserServiceCreateRes struct {
@@ -81,9 +83,8 @@ type UserServiceCreateRes struct {
 
 type UserInfoRes struct {
 	model.SysUser
-	Roles []*model.SysRole `json:"roles"`
-	//Authorities    []*model.SysMenu `json:"authorities"`
-	Permissions []string `json:"permissions"`
+	Roles       []*model.SysRole `json:"roles"`
+	Permissions []string         `json:"permissions"`
 }
 
 // 查询请求
@@ -110,11 +111,11 @@ type UserServiceGetListRes struct {
 }
 
 type UserServiceChangeStatusReq struct {
-	Id     uint
-	Status uint
+	Id     uint `json:"id"`
+	Status uint `json:"status"`
 }
 
 type UserServiceChangePwdReq struct {
-	OldPassword string
-	NewPassword string
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
 }

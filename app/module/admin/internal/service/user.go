@@ -95,10 +95,11 @@ func (s *userService) GetList(ctx context.Context, req *define.UserServiceGetLis
 	return result.WithRecords(temp), nil
 }
 
-func (s *userService) Create(ctx context.Context, req *define.UserServiceDoCreateReq) (*define.UserServiceCreateRes, error) {
-	curUser := shared.Context.Get(ctx).User
+func (s *userService) Create(ctx context.Context, req *define.UserServiceCreateReq) (*define.UserServiceCreateRes, error) {
+	if req.CreatedBy == 0 {
+		req.CreatedBy = shared.Context.Get(ctx).User.Id
+	}
 	userMap := gconv.Map(req)
-	userMap["created_by"] = curUser.Id
 	userMap["salt"] = grand.Letters(6) // 盐
 	userMap["password"] = tools.GenPassword(req.Password, userMap["salt"].(string))
 
@@ -129,14 +130,14 @@ func (s *userService) Create(ctx context.Context, req *define.UserServiceDoCreat
 	return &define.UserServiceCreateRes{UserId: uint(lastId)}, nil
 }
 
-func (s *userService) Update(ctx context.Context, req *define.UserServiceDoUpdateReq) error {
-	curUser := shared.Context.Get(ctx).User
-	userMap := gconv.Map(req)
-	userMap["updated_by"] = curUser.Id
+func (s *userService) Update(ctx context.Context, req *define.UserServiceUpdateReq) error {
+	if req.UpdatedBy == 0 {
+		req.UpdatedBy = shared.Context.Get(ctx).User.Id
+	}
 
 	return dao.SysRole.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		// 编辑用户
-		if _, err := dao.SysUser.Ctx(ctx).Data(userMap).FieldsEx(dao.SysUser.Columns.Id, dao.SysUser.Columns.Password).Where(dao.SysUser.Columns.Id, req.Id).Update(); err != nil {
+		if _, err := dao.SysUser.Ctx(ctx).Data(req).FieldsEx(dao.SysUser.Columns.Id, dao.SysUser.Columns.Password).Where(dao.SysUser.Columns.Id, req.Id).Update(); err != nil {
 			return err
 		}
 

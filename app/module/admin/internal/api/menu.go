@@ -52,8 +52,8 @@ func (a *menuApi) GetDetail(r *ghttp.Request) respond.Json {
 
 func (a *menuApi) Create(r *ghttp.Request) respond.Json {
 	var (
-		data             *define.MenuApiDoCreateReq
-		serviceCreateReq *define.MenuServiceDoCreateReq
+		data             *define.MenuApiCreateReq
+		serviceCreateReq *define.MenuServiceCreateReq
 	)
 	if err := r.ParseForm(&data); err != nil {
 		return result.Error(err)
@@ -71,8 +71,8 @@ func (a *menuApi) Create(r *ghttp.Request) respond.Json {
 
 func (a *menuApi) Update(r *ghttp.Request) respond.Json {
 	var (
-		data             *define.MenuApiDoUpdateReq
-		serviceUpdateReq *define.MenuServiceDoUpdateReq
+		data             *define.MenuApiUpdateReq
+		serviceUpdateReq *define.MenuServiceUpdateReq
 	)
 	if err := r.ParseForm(&data); err != nil {
 		return result.Error(err)
