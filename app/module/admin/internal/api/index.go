@@ -1,13 +1,14 @@
 package api
 
 import (
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/net/ghttp"
 	"payget/app/module/admin/internal/service"
 	"payget/app/shared"
 	"payget/library/respond"
 	"payget/library/result"
 	"payget/library/tools"
+
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/net/ghttp"
 )
 
 var Index = indexApi{}

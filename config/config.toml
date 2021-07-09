@@ -4,12 +4,15 @@
   serverAgent = "pay_get"
   #ServerRoot = "public"
   logPath = "./log/gf-app/server"
+  accessLogEnabled  = true
+  #DumpRouterMap    = false
 
 # Logger.
 [logger]
   path = "./log/gf-app"
   level = "all"
   stdout = true
+  ctxKeys = ["Trace-Id"]
 
 # Database.
 [database]

@@ -2,9 +2,10 @@ package shared
 
 import (
 	"context"
+	"payget/app/model"
+
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
-	"payget/app/model"
 )
 
 // 上下文管理服务

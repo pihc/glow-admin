@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"payget/library/dbcolumn"
 	"payget/library/tools"
 	"strings"
@@ -30,12 +31,11 @@ func (s *genCodeService) GenData(ctx context.Context, tableName string) error {
 		return err
 	}
 
-	g.Dump(mapFields)
-
 	// 去除表前缀
+	shortName := ""
 	for _, v := range []string{"app_", "sys_"} {
 		if strings.Contains(tableName, v) {
-			tableName = strings.Replace(tableName, v, "", -1)
+			shortName = strings.Replace(tableName, v, "", -1)
 			break
 		}
 	}
@@ -54,11 +54,29 @@ func (s *genCodeService) GenData(ctx context.Context, tableName string) error {
 	}
 
 	// 模板变量
-	data := g.Map{
-		"name":   tableName,
-		"fields": fields,
+	fillData := g.Map{
+		"short_name": shortName,
+		"name":       tableName,
+		"fields":     fields,
 	}
 
+	for _, v := range []string{"define", "service", "api"} {
+		// 填充模板
+		content, err := s.fillAndGetContent(fmt.Sprintf("code/%s.tpl", v), fillData)
+		if err != nil {
+			return err
+		}
+		// 模板保存到文件
+		if err = gfile.PutContents(fmt.Sprintf("./app/module/admin/internal/%s/%s.go", v, shortName), content); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// 填充模板并且获取填充后的模板
+func (s *genCodeService) fillAndGetContent(tplName string, fillData g.Map) (string, error) {
 	// 创建模板引擎
 	view := gview.New()
 	view.BindFuncMap(g.Map{
@@ -68,32 +86,31 @@ func (s *genCodeService) GenData(ctx context.Context, tableName string) error {
 		"CaseCamel": func(str string) string {
 			return gstr.CaseCamel(str)
 		},
-		//"add": func(a, b int) int {
-		//	return a + b
-		//},
 	})
+	// 配置
 	_ = view.SetConfigWithMap(g.Map{
 		"Paths":      []string{"template"}, // 模板文件搜索目录路径
 		"Delimiters": []string{"${", "}"},  // 模板引擎变量分隔符号。默认为 ["{{", "}}"]
 	})
-	result, err := view.Parse(ctx, "code/define.tpl", g.Map{"table": data})
+	// 填充模板
+	result, err := view.Parse(context.Background(), tplName, g.Map{"table": fillData})
 	if err != nil {
-		return err
+		return "", err
 	}
-	content, err := s.trimBreak(result)
-	if err != nil {
-		return err
-	}
-	// 模板保存到文件
-	err = gfile.PutContents("./app/module/admin/internal/define/"+tableName+".go", content)
-	return err
+	//// 剔除多余的换行
+	//content, err := s.trimBreak(result)
+	//if err != nil {
+	//	return "", err
+	//}
+
+	return result, nil
 }
 
-//剔除多余的换行
-func (s *genCodeService) trimBreak(str string) (res string, err error) {
-	var b []byte
-	if b, err = gregex.Replace("(([\\s\t]*)\r?\n){2,}", []byte("$2\n"), []byte(str)); err == nil {
-		res = gconv.String(b)
+// 剔除多余的换行
+func (s *genCodeService) trimBreak(str string) (string, error) {
+	b, err := gregex.Replace("(([\\s\t]*)\r?\n){2,}", []byte("$2\n"), []byte(str))
+	if err != nil {
+		return "", err
 	}
-	return
+	return gconv.String(b), nil
 }
