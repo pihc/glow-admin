@@ -206,10 +206,10 @@ func (s *userService) ChangePwd(ctx context.Context, req *define.UserServiceChan
 	salt := grand.Letters(6)
 	newPwd := tools.GenPassword(req.NewPassword, salt)
 
-	_, err = dao.SysUser.Ctx(ctx).Where(dao.SysUser.Columns.Id, user.Id).Data(model.SysUser{
-		Password:  newPwd,
-		Salt:      salt,
-		UpdatedBy: curUser.Id,
+	_, err = dao.SysUser.Ctx(ctx).Where(dao.SysUser.Columns.Id, user.Id).Data(g.Map{
+		dao.SysUser.Columns.Password:  newPwd,
+		dao.SysUser.Columns.Salt:      salt,
+		dao.SysUser.Columns.UpdatedBy: curUser.Id,
 	}).Update()
 
 	return err

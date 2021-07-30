@@ -1,24 +1,23 @@
 # HTTP Server
 [server]
   address = ":8199"
-  serverAgent = "pay_get"
-  #ServerRoot = "public"
-  logPath = "./log/gf-app/server"
-  accessLogEnabled  = true
-  #DumpRouterMap    = false
+  serverAgent = "glow-admin" # HTTP 响应头 "Server"
+  logPath = "./log/server"
+  accessLogEnabled  = true # 访问日志
+  logStdout = false # 控制台输出日志
+  dumpRouterMap    = false # 控制台打印路由map
 
-# Logger.
+# Logger. 业务日志 g.Log().Println()
 [logger]
-  path = "./log/gf-app"
+  path = "./log/service"
   level = "all"
   stdout = true
-  ctxKeys = ["Trace-Id"]
 
-# Database.
+# Database
 [database]
   link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
   debug = true
-  # Database logger.
+  # Database logger
   [database.logger]
     path = "/tmp/log/gf-app/sql"
     level = "all"

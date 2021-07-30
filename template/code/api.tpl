@@ -14,6 +14,7 @@ var ${.table.short_name|UcFirst} = ${.table.short_name}Api{}
 type ${.table.short_name}Api struct {
 }
 
+// ${.table.comment}分页
 func (a *${.table.short_name}Api) GetList(r *ghttp.Request) respond.Json {
 	var (
 		data *define.${.table.short_name|UcFirst}ServiceGetListReq
@@ -24,10 +25,23 @@ func (a *${.table.short_name}Api) GetList(r *ghttp.Request) respond.Json {
 	return result.Response(service.${.table.short_name|UcFirst}.GetList(r.Context(), data))
 }
 
-func (a *${.table.short_name}Api) All(r *ghttp.Request) respond.Json {
-	return result.Response(service.${.table.short_name|UcFirst}.All())
+// ${.table.comment}列表
+func (a *${.table.short_name}Api) GetAll(r *ghttp.Request) respond.Json {
+	return result.Response(service.${.table.short_name|UcFirst}.GetAll())
 }
 
+// ${.table.comment}明细
+func (a *${.table.short_name}Api) GetDetail(r *ghttp.Request) respond.Json {
+	var (
+		data *define.${.table.short_name|UcFirst}ApiDetailReq
+	)
+	if err := r.Parse(&data); err != nil {
+		return result.Error(err)
+	}
+	return result.Response(service.${.table.short_name|UcFirst}.GetDetail(r.Context(), data.Id))
+}
+
+// ${.table.comment}新增
 func (a *${.table.short_name}Api) Create(r *ghttp.Request) respond.Json {
 	var (
 		data             *define.${.table.short_name|UcFirst}ApiCreateReq
@@ -47,6 +61,7 @@ func (a *${.table.short_name}Api) Create(r *ghttp.Request) respond.Json {
 	}
 }
 
+// ${.table.comment}编辑
 func (a *${.table.short_name}Api) Update(r *ghttp.Request) respond.Json {
 	var (
 		data             *define.${.table.short_name|UcFirst}ApiUpdateReq
@@ -64,6 +79,7 @@ func (a *${.table.short_name}Api) Update(r *ghttp.Request) respond.Json {
 	return result.Success("", "编辑成功")
 }
 
+// ${.table.comment}删除
 func (a *${.table.short_name}Api) Delete(r *ghttp.Request) respond.Json {
 	var (
 		data *define.${.table.short_name|UcFirst}ApiDeleteReq

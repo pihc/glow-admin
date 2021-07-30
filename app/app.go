@@ -9,7 +9,7 @@ import (
 
 func Run() {
 	s := g.Server()
-	s.Use(shared.Middleware.Cors)
+	s.Use(shared.Middleware.Cors, shared.Middleware.ErrorHandler)
 	admin.Init()
 	s.Run()
 }
