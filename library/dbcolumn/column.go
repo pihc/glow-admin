@@ -1,7 +1,7 @@
 package dbcolumn
 
 import (
-	"payget/library/tools"
+	"glow-admin/library/tools"
 	"strings"
 
 	"github.com/gogf/gf/text/gregex"

@@ -5,7 +5,7 @@
 package model
 
 import (
-	"payget/app/model/internal"
+	"glow-admin/app/model/internal"
 )
 
 // SysConfig is the golang structure for table sys_config.

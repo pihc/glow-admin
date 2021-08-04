@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"payget/app/module/admin/internal/api"
-	"payget/app/module/admin/internal/middleware"
-	"payget/library/respond"
+	"glow-admin/app/module/admin/internal/api"
+	"glow-admin/app/module/admin/internal/middleware"
+	"glow-admin/library/respond"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"

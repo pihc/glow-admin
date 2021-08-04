@@ -5,7 +5,7 @@
   logPath = "./log/server"
   accessLogEnabled  = true # 访问日志
   logStdout = false # 控制台输出日志
-  dumpRouterMap    = false # 控制台打印路由map
+  dumpRouterMap    = true # 控制台打印路由map
 
 # Logger. 业务日志 g.Log().Println()
 [logger]
@@ -15,16 +15,16 @@
 
 # Database
 [database]
-  link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
+  link = "mysql:root:root@tcp(127.0.0.1:3306)/glow-admin"
   debug = true
   # Database logger
   [database.logger]
-    path = "/tmp/log/gf-app/sql"
+    path = "./log/sql"
     level = "all"
     stdout = true
 
 [gfcli]
   [[gfcli.gen.dao]]
-    link = "mysql:root:root@tcp(127.0.0.1:3306)/payget"
+    link = "mysql:root:root@tcp(127.0.0.1:3306)/glow-admin"
     tables = "sys_config,sys_config_data"
     jsonCase = "Snake"

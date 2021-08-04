@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
-	"payget/app/dao"
-	"payget/app/model"
-	"payget/app/module/admin/internal/define"
-	"payget/app/shared"
-	"payget/library/query"
-	"payget/library/tools"
+	"glow-admin/app/dao"
+	"glow-admin/app/model"
+	"glow-admin/app/module/admin/internal/define"
+	"glow-admin/app/shared"
+	"glow-admin/library/query"
+	"glow-admin/library/tools"
 
 	"github.com/gogf/gf/util/grand"
 

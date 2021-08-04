@@ -1,9 +1,10 @@
 package api
 
 import (
-	"github.com/gogf/gf/net/ghttp"
+	"glow-admin/library/respond"
 	"io/ioutil"
-	"payget/library/respond"
+
+	"github.com/gogf/gf/net/ghttp"
 )
 
 var Hello = helloApi{}

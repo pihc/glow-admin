@@ -1,7 +1,7 @@
 package main
 
 import (
-	"payget/app"
+	"glow-admin/app"
 )
 
 func main() {

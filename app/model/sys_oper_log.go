@@ -5,7 +5,7 @@
 package model
 
 import (
-	"payget/app/model/internal"
+	"glow-admin/app/model/internal"
 )
 
 // SysOperLog is the golang structure for table sys_oper_log.

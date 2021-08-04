@@ -5,7 +5,7 @@
 package dao
 
 import (
-	"payget/app/dao/internal"
+	"glow-admin/app/dao/internal"
 )
 
 // sysLoginLogDao is the manager for logic model data accessing

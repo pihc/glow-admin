@@ -1,8 +1,8 @@
 package app
 
 import (
-	"payget/app/module/admin"
-	"payget/app/shared"
+	"glow-admin/app/module/admin"
+	"glow-admin/app/shared"
 
 	"github.com/gogf/gf/frame/g"
 )

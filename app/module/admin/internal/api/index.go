@@ -1,11 +1,11 @@
 package api
 
 import (
-	"payget/app/module/admin/internal/service"
-	"payget/app/shared"
-	"payget/library/respond"
-	"payget/library/result"
-	"payget/library/tools"
+	"glow-admin/app/module/admin/internal/service"
+	"glow-admin/app/shared"
+	"glow-admin/library/respond"
+	"glow-admin/library/result"
+	"glow-admin/library/tools"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"

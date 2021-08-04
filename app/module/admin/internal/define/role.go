@@ -1,8 +1,8 @@
 package define
 
 import (
-	"payget/app/model"
-	"payget/library/query"
+	"glow-admin/app/model"
+	"glow-admin/library/query"
 	"strings"
 
 	"xorm.io/builder"

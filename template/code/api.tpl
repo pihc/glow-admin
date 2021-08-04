@@ -3,10 +3,10 @@ package api
 import (
 	"github.com/gogf/gf/net/ghttp"
     "github.com/gogf/gf/util/gconv"
-    "payget/app/module/admin/internal/define"
-    "payget/app/module/admin/internal/service"
-    "payget/library/respond"
-    "payget/library/result"
+    "glow-admin/app/module/admin/internal/define"
+    "glow-admin/app/module/admin/internal/service"
+    "glow-admin/library/respond"
+    "glow-admin/library/result"
 )
 
 var ${.table.short_name|UcFirst} = ${.table.short_name}Api{}

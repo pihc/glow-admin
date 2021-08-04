@@ -5,8 +5,8 @@
 package dao
 
 import (
-	"payget/app/dao/internal"
-	"payget/app/model"
+	"glow-admin/app/dao/internal"
+	"glow-admin/app/model"
 
 	"github.com/gogf/gf/util/gconv"
 )
