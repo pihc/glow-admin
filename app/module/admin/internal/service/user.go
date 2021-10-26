@@ -7,6 +7,7 @@ import (
 	"glow-admin/app/module/admin/internal/define"
 	"glow-admin/app/shared"
 	"glow-admin/library/query"
+	"glow-admin/library/token"
 	"glow-admin/library/tools"
 
 	"github.com/gogf/gf/util/grand"
@@ -23,22 +24,34 @@ var User = userService{}
 type userService struct {
 }
 
-func (s *userService) Login(ctx context.Context, dto model.LoginDTO) (*model.SysUser, error) {
-	record, err := dao.SysUser.Where(g.Map{
-		dao.SysUser.Columns.Username: dto.Username,
-	}).One()
-	if err != nil {
-		return nil, err
+// 登录
+func (s *userService) Login(ctx context.Context, req *model.LoginDTO) (g.Map, error) {
+	user, err := s.InfoByUsername(ctx, req.Username)
+	if err != nil || user == nil {
+		return nil, gerror.New("用户名或密码错误")
 	}
-	var user model.SysUser
-	if err := record.Struct(&user); err != nil {
-		return nil, err
-	}
-	pwd := tools.GenPassword(dto.Password, user.Salt)
+	pwd := tools.GenPassword(req.Password, user.Salt)
 	if user.Password != pwd {
 		return nil, gerror.New("用户名或密码错误")
 	}
-	return &user, nil
+	// 生成token
+	expire := gconv.Int(g.Config().Get("jwt.expire"))
+	tk, err := token.Generate(model.ContextUser{
+		Id: user.Id,
+	}, expire)
+
+	return g.Map{
+		"access_token": tk,
+	}, nil
+}
+
+// 获取用户信息通过账号
+func (s *userService) InfoByUsername(ctx context.Context, username string) (*model.SysUser, error) {
+	user := (*model.SysUser)(nil)
+	if err := dao.SysUser.Ctx(ctx).Where(g.Map{dao.SysUser.C.Username: username}).Scan(&user); err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (s *userService) GetUserInfo(ctx context.Context) (*define.UserInfoRes, error) {
@@ -137,12 +150,12 @@ func (s *userService) Update(ctx context.Context, req *define.UserServiceUpdateR
 
 	return dao.SysRole.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		// 编辑用户
-		if _, err := dao.SysUser.Ctx(ctx).Data(req).FieldsEx(dao.SysUser.Columns.Id, dao.SysUser.Columns.Password).Where(dao.SysUser.Columns.Id, req.Id).Update(); err != nil {
+		if _, err := dao.SysUser.Ctx(ctx).Data(req).FieldsEx(dao.SysUser.C.Id, dao.SysUser.C.Password).Where(dao.SysUser.C.Id, req.Id).Update(); err != nil {
 			return err
 		}
 
 		// 删除用户和角色的关联
-		if _, err := dao.SysUserRole.Ctx(ctx).Where(dao.SysUserRole.Columns.UserId, req.Id).Delete(); err != nil {
+		if _, err := dao.SysUserRole.Ctx(ctx).Where(dao.SysUserRole.C.UserId, req.Id).Delete(); err != nil {
 			return err
 		}
 
@@ -164,11 +177,11 @@ func (s *userService) Update(ctx context.Context, req *define.UserServiceUpdateR
 func (s *userService) Delete(ctx context.Context, id uint) error {
 	return dao.SysRole.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		// 删除用户
-		if _, err := dao.SysUser.Ctx(ctx).Where(dao.SysUser.Columns.Id, id).Delete(); err != nil {
+		if _, err := dao.SysUser.Ctx(ctx).Where(dao.SysUser.C.Id, id).Delete(); err != nil {
 			return err
 		}
 		// 删除用户和角色的关联
-		if _, err := dao.SysUserRole.Ctx(ctx).Where(dao.SysUserRole.Columns.UserId, id).Delete(); err != nil {
+		if _, err := dao.SysUserRole.Ctx(ctx).Where(dao.SysUserRole.C.UserId, id).Delete(); err != nil {
 			return err
 		}
 		return nil
@@ -176,16 +189,16 @@ func (s *userService) Delete(ctx context.Context, id uint) error {
 }
 
 func (s *userService) ChangeStatus(ctx context.Context, req *define.UserServiceChangeStatusReq) error {
-	_, err := dao.SysUser.Ctx(ctx).Where(dao.SysUser.Columns.Id, req.Id).Data(req).FieldsEx(dao.SysUser.Columns.Id).Update()
+	_, err := dao.SysUser.Ctx(ctx).Where(dao.SysUser.C.Id, req.Id).Data(req).FieldsEx(dao.SysUser.C.Id).Update()
 	return err
 }
 
 func (s *userService) ResetPassword(ctx context.Context, id uint) error {
 	salt := grand.Letters(6) // 盐
 	password := tools.GenPassword("111111", salt)
-	_, err := dao.SysUser.Ctx(ctx).Where(dao.SysUser.Columns.Id, id).Data(g.Map{
-		dao.SysUser.Columns.Password: password,
-		dao.SysUser.Columns.Salt:     salt,
+	_, err := dao.SysUser.Ctx(ctx).Where(dao.SysUser.C.Id, id).Data(g.Map{
+		dao.SysUser.C.Password: password,
+		dao.SysUser.C.Salt:     salt,
 	}).Update()
 	return err
 }
@@ -206,10 +219,10 @@ func (s *userService) ChangePwd(ctx context.Context, req *define.UserServiceChan
 	salt := grand.Letters(6)
 	newPwd := tools.GenPassword(req.NewPassword, salt)
 
-	_, err = dao.SysUser.Ctx(ctx).Where(dao.SysUser.Columns.Id, user.Id).Data(g.Map{
-		dao.SysUser.Columns.Password:  newPwd,
-		dao.SysUser.Columns.Salt:      salt,
-		dao.SysUser.Columns.UpdatedBy: curUser.Id,
+	_, err = dao.SysUser.Ctx(ctx).Where(dao.SysUser.C.Id, user.Id).Data(g.Map{
+		dao.SysUser.C.Password:  newPwd,
+		dao.SysUser.C.Salt:      salt,
+		dao.SysUser.C.UpdatedBy: curUser.Id,
 	}).Update()
 
 	return err

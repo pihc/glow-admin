@@ -1,11 +1,10 @@
 package define
 
 import (
+	"github.com/gogf/gf/database/gdb"
 	"glow-admin/app/model"
 	"glow-admin/library/query"
 	"strings"
-
-	"xorm.io/builder"
 )
 
 // ==========================================================================================
@@ -53,12 +52,11 @@ type RoleServiceGetListReq struct {
 	Name string `json:"name"`
 }
 
-func (q *RoleServiceGetListReq) Build() builder.Cond {
-	cond := builder.NewCond()
+func (q *RoleServiceGetListReq) Build(db *gdb.Model) *gdb.Model {
 	if q.Name != "" {
-		cond = cond.And(builder.Like{"role.name", strings.TrimSpace(q.Name)})
+		db = db.WhereLike("role.name", strings.TrimSpace(q.Name))
 	}
-	return cond
+	return db
 }
 
 // Service创建

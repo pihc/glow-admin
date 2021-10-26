@@ -10,10 +10,10 @@ import (
 const RspBodyKey = "gallop_rsp_key"
 
 var responderList []Responder
-var once_resp_list sync.Once
+var onceRespList sync.Once
 
-func get_responder_list() []Responder {
-	once_resp_list.Do(func() {
+func getResponderList() []Responder {
+	onceRespList.Do(func() {
 		responderList = []Responder{(StringResponder)(nil),
 			(JsonResponder)(nil),
 			(XMLResponder)(nil),
@@ -24,11 +24,11 @@ func get_responder_list() []Responder {
 	return responderList
 }
 func Convert(handler interface{}) ghttp.HandlerFunc {
-	h_ref := reflect.ValueOf(handler)
-	for _, r := range get_responder_list() {
-		r_ref := reflect.TypeOf(r)
-		if h_ref.Type().ConvertibleTo(r_ref) {
-			return h_ref.Convert(r_ref).Interface().(Responder).RespondTo()
+	hRef := reflect.ValueOf(handler)
+	for _, r := range getResponderList() {
+		rRef := reflect.TypeOf(r)
+		if hRef.Type().ConvertibleTo(rRef) {
+			return hRef.Convert(rRef).Interface().(Responder).RespondTo()
 		}
 	}
 	return nil

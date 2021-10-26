@@ -1,11 +1,10 @@
 package define
 
 import (
+	"github.com/gogf/gf/database/gdb"
 	"glow-admin/app/model"
 	"glow-admin/library/query"
 	"strings"
-
-	"xorm.io/builder"
 )
 
 // ==========================================================================================
@@ -94,15 +93,25 @@ type UserServiceGetListReq struct {
 	Username string `json:"username"`
 }
 
-func (q *UserServiceGetListReq) Build() builder.Cond {
-	cond := builder.NewCond()
+func (q *UserServiceGetListReq) Build(db *gdb.Model) *gdb.Model {
 	if q.Nickname != "" {
-		cond = cond.And(builder.Like{"sys_user.nickname", strings.TrimSpace(q.Nickname)})
+		db = db.WhereLike("sys_user.nickname", strings.TrimSpace(q.Nickname))
 	}
+
 	if q.Username != "" {
-		cond = cond.And(builder.Like{"sys_user.username", strings.TrimSpace(q.Username)})
+		db = db.WhereLike("sys_user.username", strings.TrimSpace(q.Username))
 	}
-	return cond
+
+	//cond := builder.NewCond()
+	//if q.Nickname != "" {
+	//	cond = cond.And(builder.Like{"sys_user.nickname", strings.TrimSpace(q.Nickname)})
+	//}
+	//if q.Username != "" {
+	//	cond = cond.And(builder.Like{"sys_user.username", strings.TrimSpace(q.Username)})
+	//}
+	//return cond
+
+	return db
 }
 
 type UserServiceGetListRes struct {

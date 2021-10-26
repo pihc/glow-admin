@@ -14,13 +14,11 @@ func Init() {
 	// 前台系统路由注册
 	s.Group("/admin", func(group *ghttp.RouterGroup) {
 		group.GET("/captcha", respond.Convert(api.Index.Captcha))
-		group.POST("/login", middleware.Auth.LoginHandler)
-		group.POST("/refresh_token", middleware.Auth.RefreshHandler)
-		group.POST("/logout", middleware.Auth.LogoutHandler)
+		group.POST("/login", respond.Convert(api.Index.Login))
+		group.POST("/logout", respond.Convert(api.Index.Logout))
 		group.GET("/test", respond.Convert(api.User.Test))
 
-		group.Group("/", func(group *ghttp.RouterGroup) {
-			group.Middleware(middleware.Admin.Auth)
+		group.Middleware(middleware.CheckLogin).Group("/", func(group *ghttp.RouterGroup) {
 			group.GET("/menus", respond.Convert(api.Index.Menus))
 			group.GET("/user_info", respond.Convert(api.Index.UserInfo))
 

@@ -1,10 +1,9 @@
 package define
 
 import (
+	"github.com/gogf/gf/database/gdb"
 	"glow-admin/library/query"
 	"strings"
-
-	"xorm.io/builder"
 )
 
 // ==========================================================================================
@@ -81,10 +80,9 @@ type MenuServiceGetListReq struct {
 	Title string `json:"title"`
 }
 
-func (q *MenuServiceGetListReq) Build() builder.Cond {
-	cond := builder.NewCond()
+func (q *MenuServiceGetListReq) Build(db *gdb.Model) *gdb.Model {
 	if q.Title != "" {
-		cond = cond.And(builder.Like{"sys_menu.title", strings.TrimSpace(q.Title)})
+		db = db.WhereLike("sys_menu.title", strings.TrimSpace(q.Title))
 	}
-	return cond
+	return db
 }

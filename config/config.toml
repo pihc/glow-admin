@@ -26,5 +26,8 @@
 [gfcli]
   [[gfcli.gen.dao]]
     link = "mysql:root:root@tcp(127.0.0.1:3306)/glow-admin"
-    tables = "sys_config,sys_config_data"
     jsonCase = "Snake"
+
+[jwt]
+  secret = "xxx"
+  expire = 60  #token失效时间(分钟)

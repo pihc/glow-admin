@@ -12,7 +12,6 @@ import (
 	"github.com/gogf/gf/errors/gerror"
 
 	"github.com/gogf/gf/frame/g"
-	"xorm.io/builder"
 )
 
 var Role = roleService{}
@@ -27,6 +26,7 @@ func (s *roleService) GetList(ctx context.Context, req *define.RoleServiceGetLis
 		return nil, err
 	}
 	return result.WithRecords(roles), nil
+	return nil, nil
 }
 
 func (s *roleService) All() ([]*model.SysRole, error) {
@@ -55,12 +55,12 @@ func (s *roleService) Update(ctx context.Context, req *define.RoleServiceUpdateR
 	if req.UpdatedBy == 0 {
 		req.UpdatedBy = shared.Context.Get(ctx).User.Id
 	}
-	_, err := dao.SysRole.Ctx(ctx).Data(req).FieldsEx(dao.SysRole.Columns.Id).Where(dao.SysRole.Columns.Id, req.Id).Update()
+	_, err := dao.SysRole.Ctx(ctx).Data(req).FieldsEx(dao.SysRole.C.Id).Where(dao.SysRole.C.Id, req.Id).Update()
 	return err
 }
 
 func (s *roleService) Delete(ctx context.Context, id uint) error {
-	_, err := dao.SysRole.Ctx(ctx).Where(dao.SysRole.Columns.Id, id).Delete()
+	_, err := dao.SysRole.Ctx(ctx).Where(dao.SysRole.C.Id, id).Delete()
 	return err
 }
 
@@ -91,7 +91,7 @@ func (s *roleService) SetMenus(ctx context.Context, req *define.RoleServiceSetMe
 
 	return dao.SysRole.Transaction(ctx, func(ctx context.Context, tx *gdb.TX) error {
 		// 删除角色和菜单之间的关联
-		if _, err = dao.SysRoleMenu.Ctx(ctx).Where(dao.SysRoleMenu.Columns.RoleId, req.RoleId).Delete(); err != nil {
+		if _, err = dao.SysRoleMenu.Ctx(ctx).Where(dao.SysRoleMenu.C.RoleId, req.RoleId).Delete(); err != nil {
 			return err
 		}
 		// 保存角色所拥有的菜单
@@ -105,16 +105,19 @@ func (s *roleService) SetMenus(ctx context.Context, req *define.RoleServiceSetMe
 func (s *roleService) GetMenus(roleId uint) ([]*define.RoleServiceMenuListRes, error) {
 	// 获取所有菜单
 	var list []*define.RoleServiceMenuListRes
-	cond := builder.NewCond()
-	cond = cond.And(
-		builder.Eq{"status": 1},
-	)
-	if err := query.All(dao.SysMenu.OrderAsc("sort"), cond, &list); err != nil {
+	if err := dao.SysMenu.OrderAsc("sort").Where("status = 1").Scan(&list); err != nil {
 		return nil, err
 	}
+	//cond := builder.NewCond()
+	//cond = cond.And(
+	//	builder.Eq{"status": 1},
+	//)
+	//if err := query.All(, cond, &list); err != nil {
+	//	return nil, err
+	//}
 
 	// 获取角色拥有权限的菜单
-	menuIds, err := dao.SysRoleMenu.Where(dao.SysRoleMenu.Columns.RoleId, roleId).Fields(dao.SysRoleMenu.Columns.MenuId).Array()
+	menuIds, err := dao.SysRoleMenu.Where(dao.SysRoleMenu.C.RoleId, roleId).Fields(dao.SysRoleMenu.C.MenuId).Array()
 	if err != nil {
 		return nil, err
 	}

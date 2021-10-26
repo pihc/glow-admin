@@ -11,8 +11,8 @@ func GetVerifyImgString() (idKeyC string, base64stringC string) {
 	driver := &base64Captcha.DriverString{
 		Height:          80,
 		Width:           240,
-		NoiseCount:      50,
-		ShowLineOptions: 20,
+		NoiseCount:      0,
+		ShowLineOptions: 2,
 		Length:          4,
 		Source:          "abcdefghjkmnpqrstuvwxyz23456789",
 		Fonts:           []string{"chromohv.ttf"},

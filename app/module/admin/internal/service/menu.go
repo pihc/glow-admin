@@ -11,7 +11,6 @@ import (
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/util/gconv"
-	"xorm.io/builder"
 )
 
 var Menu = menuService{
@@ -24,20 +23,20 @@ type menuService struct {
 
 func (s *menuService) GetList(ctx context.Context, req *define.MenuServiceGetListReq) ([]*model.SysMenu, error) {
 	temp := make([]*model.SysMenu, 0)
-	if err := query.All(dao.SysMenu.M, req.Build(), &temp); err != nil {
+	if err := query.All(dao.SysMenu.M, req, &temp); err != nil {
 		return nil, err
 	}
 	return temp, nil
 }
 
 func (s *menuService) Delete(ctx context.Context, id uint) error {
-	_, err := dao.SysMenu.Ctx(ctx).Where(dao.SysMenu.Columns.Id, id).Delete()
+	_, err := dao.SysMenu.Ctx(ctx).Where(dao.SysMenu.C.Id, id).Delete()
 	return err
 }
 
 func (s *menuService) GetDetail(ctx context.Context, id uint) (*model.SysMenu, error) {
 	var menu model.SysMenu
-	if err := dao.SysMenu.Ctx(ctx).Where(dao.SysMenu.Columns.Id, id).Scan(&menu); err != nil {
+	if err := dao.SysMenu.Ctx(ctx).Where(dao.SysMenu.C.Id, id).Scan(&menu); err != nil {
 		return nil, err
 	}
 	return &menu, nil
@@ -80,7 +79,7 @@ func (s *menuService) Update(ctx context.Context, req *define.MenuServiceUpdateR
 	curUser := shared.Context.Get(ctx).User
 	menuMap := gconv.Map(req)
 	menuMap["updated_by"] = curUser.Id
-	_, err := dao.SysMenu.Ctx(ctx).Data(menuMap).FieldsEx(dao.SysMenu.Columns.Id).Where(dao.SysMenu.Columns.Id, req.Id).Update()
+	_, err := dao.SysMenu.Ctx(ctx).Data(menuMap).FieldsEx(dao.SysMenu.C.Id).Where(dao.SysMenu.C.Id, req.Id).Update()
 	return err
 }
 
@@ -92,16 +91,19 @@ func (s *menuService) GetMenuList(userID uint) (list []*model.DTOMenu, err error
 }
 
 func (s *menuService) GetChildMenuAll(pid uint) (list []*model.DTOMenu, err error) {
-	cond := builder.NewCond()
-	cond = cond.And(
-		builder.Eq{"pid": pid},
-		builder.Eq{"status": 1},
-		builder.Eq{"type": 0},
-	)
-	err = query.All(dao.SysMenu.OrderAsc("sort"), cond, &list)
-	if err != nil {
+	//cond := builder.NewCond()
+	//cond = cond.And(
+	//	builder.Eq{"pid": pid},
+	//	builder.Eq{"status": 1},
+	//	builder.Eq{"type": 0},
+	//)
+	if err = dao.SysMenu.OrderAsc("sort").Where("pid = ? AND status = 1 AND type = 0", pid).Scan(&list); err != nil {
 		return
 	}
+	//err = query.All(dao.SysMenu.OrderAsc("sort"), cond, &list)
+	//if err != nil {
+	//	return
+	//}
 	for _, v := range list {
 		var child []*model.DTOMenu
 		child, err = s.GetChildMenuAll(v.Id)
@@ -137,8 +139,8 @@ func (s *menuService) GetPermissionList(userID uint) ([]string, error) {
 	if userID == 1 {
 		// 超级管理员
 		if err := dao.SysMenu.Data(g.Map{
-			dao.SysMenu.Columns.Type:   model.MenuTypeBtn,
-			dao.SysMenu.Columns.Status: model.MenuStatusShow,
+			dao.SysMenu.C.Type:   model.MenuTypeBtn,
+			dao.SysMenu.C.Status: model.MenuStatusShow,
 		}).Scan(&perm); err != nil {
 			return nil, err
 		}

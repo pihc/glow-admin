@@ -5,14 +5,13 @@ import (
 	"math"
 
 	"github.com/gogf/gf/database/gdb"
-	"xorm.io/builder"
 )
 
 //Query 分页查询条件
 type Query interface {
 	GetPageIndex() int
 	GetPageSize() int
-	Build() builder.Cond
+	Build(*gdb.Model) *gdb.Model
 	GetOrder() string
 }
 
@@ -64,6 +63,7 @@ func (r *Result) WithRecords(data interface{}) *Result {
 	r.Records = data
 	return r
 }
+
 func NewResult(page, limit, total int) *Result {
 	pages := int(math.Ceil(float64(total) / float64(limit)))
 	return &Result{
@@ -77,22 +77,15 @@ func NewResult(page, limit, total int) *Result {
 
 //Page 分页查询
 func Page(m *gdb.Model, query Query, bean interface{}) (*Result, error) {
-	sql, args, err := builder.ToSQL(query.Build())
-	if err != nil {
-		return nil, err
-	}
+	m = query.Build(m)
 	pageIndex := query.GetPageIndex()
 	pageSize := query.GetPageSize()
-	if sql != "" {
-		m = m.Where(sql, args...)
-	}
-	listM := m.Page(query.GetPageIndex(), query.GetPageSize())
+	listM := m.Page(pageIndex, pageSize)
 	order := query.GetOrder()
 	if len(order) > 0 {
 		listM = listM.Order(order)
 	}
-	var total int
-	total, err = m.Fields("1").Count()
+	total, err := m.Fields("1").Count()
 	if err != nil {
 		return nil, err
 	}
@@ -100,19 +93,13 @@ func Page(m *gdb.Model, query Query, bean interface{}) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return NewResult(pageIndex, pageSize, total).WithRecords(bean), nil
 }
 
 //All
-func All(m *gdb.Model, cond builder.Cond, bean interface{}) error {
-	sql, args, err := builder.ToSQL(cond)
-	if err != nil {
-		return err
-	}
-	if sql != "" {
-		m = m.Where(sql, args...)
-	}
-	err = m.Scan(bean)
+func All(m *gdb.Model, query Query, bean interface{}) error {
+	err := query.Build(m).Scan(bean)
 	if err != nil {
 		return err
 	}
