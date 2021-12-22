@@ -26,7 +26,6 @@ func (s *roleService) GetList(ctx context.Context, req *define.RoleServiceGetLis
 		return nil, err
 	}
 	return result.WithRecords(roles), nil
-	return nil, nil
 }
 
 func (s *roleService) All() ([]*model.SysRole, error) {

@@ -76,20 +76,26 @@ func NewResult(page, limit, total int) *Result {
 }
 
 //Page 分页查询
-func Page(m *gdb.Model, query Query, bean interface{}) (*Result, error) {
+func Page(m *gdb.Model, query Query, bean interface{}, fields ...string) (*Result, error) {
 	m = query.Build(m)
-	pageIndex := query.GetPageIndex()
-	pageSize := query.GetPageSize()
-	listM := m.Page(pageIndex, pageSize)
-	order := query.GetOrder()
-	if len(order) > 0 {
-		listM = listM.Order(order)
-	}
-	total, err := m.Fields("1").Count()
+
+	mp := m.Clone()
+	total, err := mp.Fields("*").Count()
 	if err != nil {
 		return nil, err
 	}
-	err = listM.Scan(bean)
+
+	for _, v := range fields {
+		m = m.Fields(v)
+	}
+	order := query.GetOrder()
+	if len(order) > 0 {
+		m = m.Order(order)
+	}
+
+	pageIndex := query.GetPageIndex()
+	pageSize := query.GetPageSize()
+	err = m.Page(pageIndex, pageSize).Scan(bean)
 	if err != nil {
 		return nil, err
 	}
